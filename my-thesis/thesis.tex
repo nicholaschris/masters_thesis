@@ -1,0 +1,2555 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{placeins}
+\usepackage[normalem]{ulem}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage[skip=4pt]{caption}
+\usepackage[authoryear, round]{natbib}
+
+\bibliographystyle{apalike}
+%\usepackage{biblatex}
+\linespread{1.5}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\restylefloat{figure}
+\graphicspath{{/home/nicholas/masters/figures/misc/}}
+
+
+  
+\begin{document}
+\title{Optimising strategies for sampling air-sea Carbon Dioxide flux in the 
+       Southern Ocean}
+\author{Nicholas Pringle}
+\date{April 2012}
+\maketitle
+%\tableofcontents
+\newpage
+ \newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}l@{}l@{}}#2\end{tabular}}
+  
+\begin{abstract}
+%begin abstract
+%% Opening sentence
+%In this dissertation, the aim is to optimize sampling strategies for 
+%returning low-uncertainty CO$_2$ flux measurements in the Southern Ocean.
+%% OR
+%% Opening sentence
+A model study was undertaken to investigate the optimization of 
+sampling strategies for returning low-uncertainty CO$_2$ flux 
+measurements in the Southern Ocean. Two approaches are used. 
+
+The first is the traditional approach of a regular gridded sampling
+strategy that assumes the use of North to South ship-board measurements. 
+This approach uses a combination signal-to-noise ratio and 2D Fourier 
+transforms as well as a brute-force method to suggest
+a suitable sampling frequency in space and time that returns a 
+low-uncertainty mean annual CO$_2$ flux or pCO$_2$.
+
+The second approach uses a Genetic Algorithm to return a collection of 
+sampling locations in space and time that can succesfully represent the 
+model data-set in one of two ways. 
+Firstly, by returning a sample closely matching the statistical 
+characteristics of the data-set; and secondly, 
+by accurately representing the data-set when interpolated using Radial 
+Basis Function interpolation.
+The sampling strategy that the Genetic Algorithm suggests is then tested on 
+the model data in order to validate the sampling strategy. 
+
+A sampling strategy using approximately 100, 500, and 1000 locations is 
+calculated from the simulated decadel mean and then applied to the 
+simulated annual averages.  
+A sampling strategy using 500, 1000, 5000, and 10000 locations is 
+calculated from the seasonal cycle and the applied to the model data for 
+each year. 
+The results compare the mean value, standard deviation and Root Mean Square
+Error of the Radial Basis Function interpolation of the sample data to the
+model data.
+
+The expected result from these investigations is that the spatio-temporal 
+regions associated with the highest variability will be sampled at the 
+highest frequencies and regions that are not highly variable are sampled 
+less frequently.  
+
+With the introduction of wave-gliders into the pCO$_2$ measuring suite, 
+we hope to be able to optimize sampling strategies that do not rely on a 
+regular-gridded approach. 
+This dissertation aims to investigate the optimization of sampling
+strategies that go beyond ship-board measurements to include the use of 
+wave-gliders and other autonomous pCO$_2$ measuring platforms.
+
+%% Old stuff
+%This project investigates CO2 flux sampling strategies of a model dataset by:
+%Using SNR with 2D Fourier Transforms to determine the bes sampling frequency, 
+%A new (bootstrap) method that visualises the trade off between sampling error
+%and sampling effort, and
+%a genetic algorithm approach that discards using a regular grid as a 
+%sampling strategy and tries to optimise the sampling locations based on
+%the ability of those locations to represent the model data.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction}
+%begin Introduction
+\subsection{Background}
+%begin background
+Opportunities for taking oceanographic measurements in the Southern 
+Ocean are far fewer than in the Northern Hemisphere oceans. 
+This is especially true for measurements of CO${_2}$ concentrations 
+and fluxes. 
+The use of underway pCO${_2}$ measurements with commercial shipping 
+has provided valuable and extensive data in the Northern Hemisphere, 
+but the Southern Hemisphere lacks the intensity of commercial shipping 
+lanes and therefore the coverage of surface ocean pCO$_2$ data.
+
+The Southern Ocean and its role in the carbon cycle needs to be more 
+extensivley researched in order for meaningful information to emerge 
+from ocean-atmosphere models. The effects of the increase of 
+atmospheric CO${_2}$ on climate change will not be understood or 
+accurately estimated without a sound knowledge of Southern Ocean 
+CO${_2}$ concentrations and fluxes.
+
+%The ocean and the atmosphere strive for equilibrium but the system 
+%is constantly fluctuating.
+The Southern Ocean is a sink for atmospheric carbon but as the 
+concentration in the ocean increases, the ability  of the Southern 
+Ocean to act as a sink becomes threatened.
+
+"Without understanding the carbon exchange at the boundary with a high 
+degree of certainty and being able to account for random events which 
+may affect data gathered or phenomena being measured, it is not 
+possible to estimate the long term impact of changing ocean CO${_2}$
+sink on the effectiveness of global emission reduction targets." - 
+ScienceScope Volume 6 Number 1
+
+
+\subsection{Climate change in the Southern Ocean}
+%begin climate change in SO
+The Southern Ocean is a regulator of regional climate and global 
+atmospheric CO${_2}$.
+While the Northern Hemipshere is largely dominated by land, the 
+Southern Hemipshere is dominated by the circumpolar Southern Ocean.
+The seasonal variability of atmospheric CO${_2}$ is dominated by the 
+land biosphere; 
+whereas the Southern Ocean governs long-term trends on decadel and 
+greater time scales.
+
+Climate change puts the Southern Ocean-atmosphere system at risk. 
+Changes to ocean systems are not as managable as terrestrial and 
+atmospheric systems and can have significant negative impacts 
+if driven by positive feedback mechanisms.
+
+The interior waters of the Southern Ocean store four tenths of 
+Anthropogenic CO${_2}$.
+Two mechanisms, the solubility pump and the biological pump, enable 
+the storage. 
+The solubility pump is the result of uptake due to cooling and sinking 
+of sub-tropical waters and the biological pump is the result of 
+phytoplankton taking up carbon and transporting it to the deep waters.
+
+While the Southern Ocean is a net sink of anthropogenic carbon, there 
+is a large outgassing of CO${_2}$ due to Circumpolar Deep Water 
+upwelling south of the Polar Front. 
+This is the only place in the world where water from below 2000m with 
+pCO${_2}$ greater than 450 ${\mu}$ atm is in direct contact with the 
+atmosphere.
+The Southern Ocean uptake of carbon is ${\pm}$2 Gtons.C .y$^{-1}$ which
+is 20\% of the total ocean sink.
+There are large differences between sources and sinks in the region 
+which are sensitive to small adjustments in climate forcing.
+
+Future Southern Ocean air-sea exchange of CO${_2}$ is predicted to 
+weaken due to an increase in the westerly winds and a weakening of the 
+biological pump.
+The strengthening of the westerly winds, along with a poleward shift 
+will enhance outgassing from Circumpolar Deep Water.
+The biological pump will weaken because of warming and freshening of 
+water. 
+The net result is believed to be a positive feedback mechanism that 
+will weaken the oceanic sink of CO${_2}$.
+
+\subsection{Concurrent research}
+%begin concurrent research
+To determine the partial pressure of CO${_2}$ at the ocean-atmosphere 
+interface, ship cruise data are being used to find a numerical model to
+couple measurements of sea surface temperature, mixed layer depth (MLD)
+and chorophyll concentration with pCO${_2}$.
+
+Statistical methods are also used to provide an empirical relationship 
+between the partial pressure of CO${_2}$ and bio-geographic factors 
+measured by shipboard instruments.
+
+\newpage
+\section{Literature Review}
+%begin Literature review
+\subsection{Anthropogenic Activities and CO$_2$ or CO$_2$ and Society}
+%begin anthropogenic activities 
+Anthropogenic activities have been driving an increase in the concentration of 
+CO$_2$ in the atmosphere since the Industrial Revolution in the 1850s 
+\citep{keelingandwhorf2003}.%(Keeling and Whorf, 2003). 
+Estimates put the pre-industrial atmospheric CO$_2$ 
+concentration at 280 parts per million per volume (ppmv) which is 112 ppmv less 
+than current day estimates of 392 ppmv 
+\citep{tans2011trends}.%(Tans and Keeling, 2011). 
+In the last 420 000 years, this rate of increase of Atmospheric CO$_2$ concentration 
+has not been as rapid as we now observe 
+\citep{falkowski2000}.%(Falkowski et al., 2000). 
+As CO$_2$ in the atmosphere acts as a greenhouse gas, 
+an increase in atmospheric CO$_2$ is believed to lead to an increase in global 
+temperature 
+\citep{Schimel2001}.%(Prentice et al., 2001). 
+
+Not all anthropogenic emissions of CO$_2$ remain in the atmosphere. 
+A large percentage ($\pm60\%$) is taken up by the 
+other two resevoirs of the carbon cycle, the ocean and the terrestrial 
+biosphere. 
+According to 
+\citet{Sabine2004},%(Sabine et al., 2004)
+48\% of anthropogenic CO$_2$ that has been emitted has been taken up by the oceans. 
+The increase of CO$_2$ in the surface oceans has resulted in a global pH decrease of 0.15. 
+
+The rate of anthropogenic CO$_2$ emissions is not decreasing due to rapid 
+development in many new economies 
+\citep{}.%(Solomon et al. 2007).
+
+The role of the oceans in atmospheric CO$_2$ was not much considered until 
+\citet{Revelle2010}%Revelle and Suess (1957) 
+suggested that oceans were the long term regulator of 
+atmospheric CO$_2$. This led to further studies into the role of the oceans 
+in both the short term and the long term carbon cycle.
+
+\subsection{The Carbon Cycle}
+%begin carbon cycle
+The global carbon cycle consists of different reservoirs that operate on 
+different residence times or flux rates. 
+
+As the smallest reservoir with the smallest residence time, the atmosphere is 
+said to be a good indicator of the state of the global carbon cycle 
+\cite{Sarmiento2006}. %(Sarmiento and Gruber, 2006). 
+Atmosheric CO$_2$ concentrations have been reconstructed from air bubbles in ice 
+cores 
+\cite{Indermuhle1999, Petit1999}%(Inderm\"{u}hle et al., 1999; Petit et al., 1999).
+Variations of CO$_2$ concentration from 180ppm to 280ppm were observed to 
+occur in time with glacial-interglacial cycles with glacial maxima coinciding 
+with CO$_2$ minima.
+
+The terrestrial reservoir has a residence time of 6 to 8 years, whereas the surface 
+ocean has a residence time of in the order of tens of years. 
+
+It is the deep ocean, with a residence time in the order of hundreds of years, 
+that controls the atmospheric CO$_2$ variations seen in the glacial-interglacial cycles 
+\cite{Sarmiento2006}%(Sarmiento and Gruber, 2006).
+
+Glacial-interglacial cycles have dominated global climate 
+\cite{Sigman2000}%(Sigman and Boyle, 2000) 
+and are believed to have been a result of variations 
+in Earth's orbit. 
+The ice-core records show a close correlation between 
+atmospheric CO$_2$ and temperature 
+\cite{Jouzel1987}%(Jouzel et al., 1987). 
+According to 
+\citet{Paillard2004},%Paillard and Parrenin (2004), 
+Antarctic sea-ice extent could alter CO$_2$ fluxes enough 
+to switch from one phase to another. 
+
+Deep water formation in high latitudes 
+plays a role in transporting CO$_2$ from atmosphere to the deep ocean.
+The deep oceans are 12\% richer in inorganic carbon than the surface 
+\cite{Sarmiento1994}.%(Sarmiento and Bender, 1994). 
+A mechanism transporting carbon across the 
+concentration gradient is needed to sequester carbon in the deep ocean. 
+\citet{VolkHoffart1985}%Volk and Hoffert (1985) 
+recognise three such carbon pumps: the solubility, 
+the soft-tissue, and the carbonate pumps.
+
+The geological reservoir has a residence time of over 100 000 years, and it is 
+from this resevoir that anthropogenic emissions of CO$_2$ have primarily been 
+sourced. 
+As a result, the carbon cycle, once considered to have been in 
+equilibrium, is now unbalanced as anthropogeic emissions of CO$_2$ begin to 
+build up in the terrestrial and surface ocean reservoirs.
+
+The build up of carbon in reservoirs with time scales shorter than geological, 
+such as the atmosphere and the surface ocean, has created an imbalance in the system.
+The pre-industrial carbon cycle was considered to be at equilibrium.
+
+\subsection{Carbon Dioxide in the Oceans}
+%begin co2 in oceans
+% from Luke Gregor:
+The Keeling Curve shows that global atmospheric CO$_2$ is increasing, but 
+this is more difficult to demostrate in the oceans. 
+In the 1990s, ship based pCO$_2$ 
+measurements were dramatically increased through the efforts of the Joint 
+Global Ocean Flux Study (JGOFS, 1990).
+The focus of the JGOFS was to quantify air-sea CO$_2$ exchange in the open 
+oceans.
+\citet{Takahashi1997}%Takahashi et al. (1997) 
+published the first global estimate of air-sea CO$_2$ 
+flux based on in-situ data. 
+An ocean CO$_2$ uptake of 0.6 to 1.34 PgC.yr$^-1$ 
+was estimated from 250 000 data points. 
+This estimate was improved on in more recent publications. 
+
+% include takahashi_etal_2009.tex
+In 
+\citet{Takahashi2002}%Takahasi et al. (2002)
+, they made use of 0.94 million surface water 
+measurements of pCO$_2$.
+
+\citet{Takahashi2009}%Takahashi et al. (2009) 
+made use of about 3 million measurements to construct a 
+climatological mean distribution for surface water pCO$_2$.
+Observations made in the equatorial Pacific during El Ni\~{n}o and observations 
+in coastal waters were excluded.
+Using a mean rate of +1.5 $\mu$atm.y$^{-1}$, the data captured in different 
+years was corrected by 
+\citet{Takahashi2009}%Takahashi et al. (2009) 
+to a reference year, 2000. 
+The increase of +1.5 $\mu$atm.y$^{-1}$ is consistent with the decadal mean rate of 
+increase of atmospheric pCO$_2$. 
+\citet{Takahashi2009}%Takahashi et al. (2009) 
+estimate the annual mean net CO$_2$ uptake flux to be -
+1.6$\pm$0.9 PgC.yr$^-1$ and the total ocean uptake flux including anthropogenic 
+CO$_2$ to be 2.0$\pm$1.0 PgC.yr$^{-1}$
+
+% from Wetzel: Regards measurement or estimates of CO2 flux
+Different methods have been used to constrain CO$_2$ fluxes. 
+The IPCC (2001) uses atmospheric O$_2$/N$_2$ observations 
+\citep{(Keeling and Shertz, 1992)} 
+to derive rates of anthropogenic CO$_2$ uptake. 
+Inverse atmospheric models have been used to calculate land and ocean 
+fluxes from atmospheric CO$_2$ data 
+\citep{Gurney2002} %(Gurney et al., 2002; Rodenbeck et al. ,2003). 
+Oceanic uptake of anthropogenic CO$_2$ can also be estimated from CFC data sets 
+\cite{McNeil2003}.%(McNeil et al., 2003). 
+Observations of reduced isotopic ratio ($^{13}$C) of Dissolved 
+Inorganic Carbon (DIC) was used by 
+\citet{gruberandkeeling2001}%Gruber and Keeling (2001). 
+The Ocean Carbon Cycle Intercomparison Project (OCMIP-2) evaluated 19 
+ocean carbon cycle models with radiocarbon and CFC-11 data 
+\cite{Matsumoto2004}%(Matsumoto et al., 2004).
+
+% include wetzel_etal_2005.tex
+Using a biogeochemical carbon cycle model (HAMOCC5) coupled online to 
+a global ocean general circulation model (MPI-OM), 
+\citet{Wetzel2005}%Wetzel et al. (2005) 
+simulated and 
+analysed the trends and variability in sea-air CO$_2$ flux from 1948 to
+2003.
+The model study showed a global interannual variability of $\pm$0.50 
+PgC yr$^{-1}$ dominated by ocean dynamics in the equatorial Pacific 
+\citep{Wetzel2005}.%(Wetzel et al. (2005)).
+\citet{Wetzel2005}%Wetzel et al. (2005) 
+observe two patterns that emerge on a global, decadal 
+scale. 
+Firstly, the interannual variability of the equatorial Pacific decreases 
+from $\pm$0.32 PgC yr$^{-1}$ to $\pm$0.23 PgC yr$^{-1}$, and the mean 
+outgassing of CO$_2$ goes from 0.70 PgC yr$^{-1}$ to 0.58 PgC yr$^{-1}$. 
+Secondly, the Southern Ocean CO$_2$ flux increases over the simulation 
+period due to increasing wind velocities causing stronger upwelling 
+and deeper mixed layers 
+\citep{Wetzel2005}. %(Wetzel et al. (2005)). 
+Globally the estimated CO$_2$ flux of 
+\citet{Wetzel2005} %Wetzel et al. (2005) 
+was 1.49 PgC yr$^-1$ 
+into the ocean for 1980-1989 and 1.74 PgC yr$^-1$ into the ocean for 1990-1999.
+
+% include mahadevan_etal_2004
+The impact of mesoscale and submesoscale oceanic processes on sea surface 
+pCO${_2}$ is examined by 
+\citet{Mahadevan2004} %Mahadevan et al. (2004) 
+in order to explain 
+variability observed at length scales of order 10km. 
+According to 
+\cite{Mahadevan2004} %Mahadevan et al. (2004)
+, only small variations in surface pCO$_2$ are induced by 
+submesoscale upwelling while larger variations are generated at larger scales.
+
+% include resplandy_etal_2009
+A high-resolution ocean biogeochemical model, validated against shipboard and 
+float data,  is used by 
+\citet{Resplandy2009} %Resplandy et al. (2009) 
+to estimate oceanic pCO2 and 
+air-sea CO2 flux in the NE Atlantic.
+The study shows large submesoscale variability of the carbon system with 
+gradients of 25 $\mu$atm over 20km, which is similar to the mean seasonal 
+drawdown of pCO$_2$ \citep{Resplandy2009}.%(Resplandy et al., 2009).
+A comparison of air-sea flux derived from the model and that of the floats 
+and shipboard observations gives a sampling error of 15 to 30\% and results 
+from coarser model simulations show that model resolution only accounts for 
+5\% error \cite{Resplandy2009}.%(Resplandy et al., 2009).
+Thus, according to 
+\citet{Resplandy2009} %Resplandy et al. (2009)
+, the net air-sea CO$_2$ is largely 
+unaffected by the submesoscale variability of pCO$_2$.
+
+\subsubsection{Calculating Carbon Flux}
+%from Luke
+The error in the annual mean CO$_2$ uptake flux from 
+\citet{Takahashi2009} %Takahashi et al. (2009) 
+shows high error in the estimates. 
+Some of the error (how much? 30\% according to Takahashi for 
+$k_w$?) is a result of how flux estimates are derived.
+
+CO$_2$ flux ( {\em F} ) is calculated as:
+\begin{equation} 
+F = k_{w} \cdot K_{0} \cdot \Delta pCO_2 %(pCO_{2}^{sea} - pCO_{2}^{air})
+\end{equation}
+
+Where $k_w$ is the gas transfer velocity, $K_0$ is the solubility parameter
+and $\Delta$ pCO$_2$ is $pCO_{2}^{sea} - pCO_{2}^{air}$, the difference between
+the partial pressure of CO$_2$ in the ocean and the atmosphere. 
+
+Several theoretical models have contributed to understanding of the
+emperically determined gas transfer velocity. 
+The stagnant-film model 
+\citep{LissMerlivat1974, BroekerPeng1974} 
+assumes a thin layer (stagnant film) of water in which 
+diffusion between the atmosphere and surface water occurs
+but address mixing between the surface layer and the film.
+A dynamic interface is defined in the replacement film
+\citep{Danckwerts1951} 
+and the eddy impingement models
+\citep{McCreadyHanratty1984}
+to address mixing between the layers. 
+The models have the following concepts:
+\begin{itemize}
+\item The transfer velocity is dependant on the turbulence
+at the interface and the thickness of the film.
+\item Turbulence at the interface is affected by wind stress.
+\end{itemize}
+
+\citet{Nightingale2009}
+mention factors such as wave breaking, bubble formation, 
+humidity and temperature gradients, and surfactantsmay can alter 
+the gas exchange velocity.
+
+The Schmidt number $Sc$ is the thickness of the film and is 
+determined by the ratio:
+\begin{equation}
+Sc = v/e
+\end{equation}
+where $v$ is the kinematic viscosity of water
+and $\epsilon$ is the molecular diffusivity
+of a particular gas therefore allowing the gas transfer velocity
+to be determined for different temperatures and gasses.
+
+Both $Sc$ \citep{Wanninkhof1992}
+and $k_w$ are defined empirically.
+A number of studies done in both the field and in laboritories
+have resulted in different parameterisations of $k_w$, the gas transfer volocity.
+These parameterisations have been summarised in table 1.
+\begin{table}
+\caption{Parameterisations of gas transfer velocities in various publications}
+\begin{tabular}[h]{l|l}
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Marine Carbonate Chemistry}
+%from luke
+CO$_2$ in the ocean is influenced by biology, temperature, and transport.
+These factors can determine whether or not an area of the ocean is a sink or 
+a source.
+%CO$_2$ in the ocean is influenced by biology, temperature and transport.
+The reaction of CO$_2$ in seawater is described in the following equation:
+\begin{equation}
+%\begin{aligned}
+$$
+$CO_{2(aq)} + H_2O \stackrel{K_0}{\longleftrightarrow} H_2CO_{3}^{*}$
+
+$H_2CO_{3}^{*} \stackrel{K_1}{\longleftrightarrow} H^{-} + HCO_{3}^{-}$
+
+$HCO_{3}^{-} \stackrel{K_2}{\longleftrightarrow} H^{-} + CO_{3}^{2-}$
+$$
+%\end{aligned}
+\end{equation}
+
+Carbon in th ocean is found in three forms: dissolved inorganic carbon (DIC), 
+dissolved organic carbon (DOC), and particulate organic carbon (POC).
+Most of the CO$_2$ in the ocean is stored as bicarbonate (HCO$_3^-$)
+		
+%\subsection{Ocean Acidification}
+
+\subsection{The Southern Ocean}
+%begin Southern Ocean
+The Southern Ocean is a unique and important region that is strongly connected
+to global ocean circulation, and to climate change. It is believed to be carbon
+sink.
+
+The Antarctic Circumpolar Current (ACC) connects the three major ocean basins: 
+the Pacific, the Atlantic, and the Indian Ocean. It therefore acts as an interface
+for heat and fresh water transfer between the oceans.
+
+Regions of upwelling in the Southern Ocean allow for heat transfer from
+the deep ocean to the atmosphere.
+
+The Southern Ocean is the source for Antarctic Bottom Water. 
+
+% Southern Ocean zones
+% Orsi et al. 2005
+Orsi et al. 1995 investigated the Antarctic Circumpolar Current and 
+fronts in the Southern Ocean.
+The northenmost extent of the Sub-Antarctic waters is the Sub-Tropical 
+Front (STF). 
+The Sub-Antarctic Front is found further south and the Polar Front even
+further south.
+
+% Thomalla et al.
+
+Thomalla et al. (2011) provide a regional characterization scheme for the 
+Southern Ocean that improves understanding of regional differences in ecosystem 
+sensitivity to climate forcing. The seasonal cycle is defined by four zonal 
+regions: the Subtropical Convergence Zone (STZ), the transition zone (TZ), the 
+Antarctic circumpolar zone (ACZ) and the marginal ice zone (MIZ). 
+The extent of inter-annual seasonal phase locking and the magnitude of 
+integrated seasonal biomass led to additional classification of the four regions 
+(Thomalla et al., 2011). 
+The regions are described by high or low chlorophyll 
+and high or low seasonality. Any combination of chlorophyll or seasonality 
+is possible and the combination of 
+the two classifications can help with understanding the role of physical and 
+biological drivers of production and CO$_2$ flux in the Southern Ocean 
+(Thomalla et al., 2011).
+
+\subsection{Carbon in the Southern Ocean}
+% include{carbon_in_the_southern_ocean}
+
+According to Friedlingstein et al. (2003), model studies show a positive 
+feedback between climate change and the carbon cycle and demonstrate that the Southern 
+Ocean circulation, which controls geochemical uptake of CO$_2$, is poorly 
+constrained in these models.
+
+Rangama et al. (2005) used shipboard and satellite measurements to assess 
+small-scale variability of pCO$_2$ and estimate the net air-sea CO$_2$ flux in 
+the Southern Ocean south of Tasmania and New Zealand. An oceanic sink of -0.08 
+GtC.yr$_-1$ was was estimated with an error of 0.03 GtC.yr$_-1$.
+
+According to Le Quere et al. (2007), climate change has caused a decrease in 
+Southern Ocean CO$_2$ uptake. 
+Matear et al. (2008) used a model study to investigate how changes in heat and 
+freshwater fluxes as well as winds affect Southern Ocean CO$_2$ uptake. 
+Matear et al. (2008) 
+show that while increase in heat and freshwater fluxes drive an increase in 
+uptake; increase in wind stress drives an approximately equal and opposite 
+response resulting in a Southern Ocean response equal to that with no climate change.
+The positive feedback of the Southern Ocean carbon 
+cycle on climate change will, according to Matear et al. (2008) 
+become a negative feedback mechanism once the 
+partial pressure of atmospheric CO$_2$ reaches that of Circumpolar Deep Water. 
+Matear et al. (2008) also show that climate change 
+could reduce the aragonite saturation state in the Southern Ocean.
+
+The decadal variability in the fugacity of Carbon Dioxide (fCO$_{2}$) 
+at the sea surface was analyzed by Metzl et al. (2008). The area of focus 
+was the south-western Indian Ocean and corresponding Antarctic sector. 
+This study was based on seasonal cruises during the period 1991-2007 
+(Metzl et al. 2008). 
+According to the shipboard observations the average 
+annual rate of the atmospheric CO$_{2}$
+increase was 1.72 ppm/yr which is equivalent to the annual growth rate 
+recorded at monitoring stations in the Southern Hemisphere. 
+The oceanic fCO2 increased at a rate of 2.11$\pm$0.07 $\mu$atm.yr$^-1$ 
+for the period 1991-2007. 
+According to Metzl et al. (2008) the rate of increase is greater 
+(0.4 $\mu$atm.yr$^-1$ faster) in the oceans than in the atmosphere. This has 
+implications for the ocean carbon sink.
+
+\subsection{Sampling Strategies for CO$_2$ flux}
+% include{sampling strategies for CO2 flux}
+The uncertainty in the estimates of global and regional CO$_2$ uptake is a barrier 
+to understanding the global carbon cycle and the global climate. The sampling 
+frequencies required to accurately estimate air-sea CO$_2$ fluxes have been the 
+subject of a number of studies.
+
+\emph{Gar\c{c}on et al.} (1992) investigated the sampling frequency required to 
+estimate air-sea CO$_2$ flux in the North Pacific. In order to reduce the uncertainty
+in estimating the air-sea CO$_2$, a high resolution time series of air-sea flux
+was sub-sampled to determine the optimal temporal sampling frequency. According to 
+\emph{Gar\c{c}on et al.} (1992) the sampling requirements were 24 samples per year
+in the Pacific.
+
+A study was done by \emph{M\'{e}mery et al.} (2002) in the Mediterranean Sea in which 
+time scales for estimating air-sea C0$_2$ exchange was investigated. This study also 
+made use of a highly resolved observational time series and determined a sampling frequency 
+of greater than 70 samples per year for the Mediteranean Sea.
+
+In the Southern Ocean, \emph{Sweeney at al.} (2002) used a summer and a winter
+north-south transect to determine spatial sampling required to constrain the mean 
+$\Delta$pCO$_2$ to $\pm$4.3 $\mu$atm. This $\Delta$pCO$_2$ value can be calculated as
+an uptake of $\pm$0.1 PgC/yr using a mean Southern Ocean gas exchange coefficient.
+According to \emph{Sweeney at al.} (2002), sampling every 5$^\circ$ in latitude in summer
+and sampling every 10$^\circ$ in latitude in winter is sufficient to meet the requirements.
+
+\emph{Takahashi and Sweeney} (2002) determined the sampling needed to estimate the
+net annual CO$_2$ flux by subsampling monthly flux maps of the global, gridded data set of
+\emph{Takahashi et al.} (1997). According to \emph{Takahashi and Sweeney} (2002)
+, sampling every 4 months, or 3 times a year is required.
+
+\emph{Lenton et al.} (2006) combined temporal and spatial sampling strategies to 
+validate a sampling strategy that reduces Southern Ocean annual CO$_2$ uptake uncertainty
+to $\pm$0.1 PgC/yr.
+
+\emph{Lenton et al.} (2006) used a time-evolving - prognostic - high-resolution
+- biogeochemical model to simulate fluxes. According to \emph{Lenton et al.} (2006) 
+an accurate representation of the Southern Ocean C0$_2$ uptake and its uncertainty provides: 
+\begin{inparaenum}[(1)]
+\item the essential information to resolve the present mismatch between observation and 
+and model estimates of the uptake which will reduce the uncertainty in the global
+budget [\emph{Friedlingstein et al.}, 2003]; 
+\item a reference against which future changes in variability can be assessed; and
+\item an observational estimate to assess and validate numerical models.
+\end{inparaenum}
+
+In developing a sampling strategy that will resolve the temporal and spatial variability,
+\emph{Lenton et al.} (2006) used Fourier Transforms with signal-to-noise ratios. This identified
+the dominant frequencies in time and space that control variability in the simulated
+air-sea CO$_2$ fluxes of the Southern Ocean.
+
+\emph{Lenton et al.} (2006) determined that sampling regularly every 3 months, 
+at 3$^\circ$ in longitude and 3$^\circ$ in latitude is sufficient to determine the
+net Southern Ocean CO$_2$ uptake. They applied their sampling strategy to 
+the simulated air-sea fluxes in order to estimate the annual mean CO$_2$ uptake.
+
+Sparse ocean sampling in the Southern Ocean especially means that the simulated 
+data cannot be accurately assessed. \emph{Lenton et al.} (2006) separated the
+simulated air-sea flux variability into seasonal and non-seasonal variabiltity.
+\emph{Lenton et al.} (2006) defines the seasonal variablitiy as the daily 
+(climatological) data and the non-seasonal variabilty is the variability not represented
+by the seasonal cycle.
+
+\emph{Lenton et al.} (2006) compared the simulated seasonal cycle to 
+the coarse-resolution, monthly climatological maps of Takahashi et al (2002). 
+The simulated seasonal 
+cycle of Lenton et al. (2006) captured the variability evident in the observations
+in Takahashi et al (2002).
+
+\emph{Lenton et al.} (2006) calculated signal-to-noise ratios (SNR) following
+\emph{Ballabrera-Poy et al.} (2003) and \emph{Schiller et al.} (2004) in order to assess
+the air-sea flux variability. 
+
+\emph{Lenton et al.} (2006) defined the seasonal cycle to be the signal and the 
+nonseasonal variablitiy to be the noise.
+
+\begin{equation}
+SNR = \frac{\sigma^2_{SIGNAL}}{\sigma^2_{NOISE}} = 
+\frac{\sigma^2_{SIGNAL}}{\sigma^2_{ALLDATA} - \sigma^2_{SIGNAL}}
+\end{equation}
+\newline
+\emph{Lenton et al.} (2006) calculated a SNR of less than 1 for most of the Southern Ocean 
+when computing a SNR map
+for the daily simulated air-sea CO$_2$ fluxes.
+
+In those regions where the SNR is less than 1, the seasonal cycle cannot be distinguished from the
+non-seasonal variability. The variability of the seasonal cycle calculated in 
+\emph{Lenton et al.} (2006) was not homogenous in space which is consistent with 
+\emph{Takahashi et al.} (2002) climatology.
+
+\emph{Lenton et al.} (2006) attempts to answer the question, "[w]hat sampling was required to 
+constrain the Southern Ocean air-sea CO$_2$ flux given the large variability observed 
+in the model?" by using two-dimensional Fourier Transforms (2D-FT) in space and time along
+constant sections of latitude and longitude.
+
+The plots that \emph{Lenton et al.} (2006) produced showed that the Southern Ocean 
+was a net uptake region; there was a more uniform
+spread of variability across a range of periods when the wavelength was longer 
+({$\lambda$ \textless 5$^\circ$}); 
+and the variance explained by short periods
+(T \textgreater 20 days) and short wavelengths 
+({$\lambda$ \textgreater 5$^\circ$}) declined rapidly.
+
+\emph{Lenton et al.} (2006) derived a relationship for SNR in the frequency domain
+that is equal to SNR in the temporal domain.
+
+\begin{equation}
+SNR(f) = \frac{\sum_{n=1}^{f} H_{signal}(n)^2}{\sum_{n=1}^{f} H_{noise}(n)^2}
+\end{equation}
+
+Lenton et al. (2006)  applied this equation to the 2D-FTs that
+they had calculated in order to see how the SNR
+changed as time and space was sampled at higher temporal and spatial 
+frequencies. 
+\emph{Lenton et al.} (2006) found that variance explained does 
+not increase much once the seasonal cycle is resolved, and 
+once the seasonal cycle is resolved the spatial sampling 
+frequency needs to increased to increase the SNR. 
+This was consistent with the result of the SNR plots in the temporal domain 
+being less than 1 in most regions and 
+confirmed that a high resolution in time or space still returns a low SNR when 
+combined with a low resolution in space or time.
+
+\emph{Lenton et al.} (2006) showed that the statistical properties of 
+the model and the proposed sampling startegy are consistent with the 
+statistical properties of observations.
+
+\emph{Lenton et al.} (2006) quantified the uncertainty of estimated mean annual uptake
+by applying their sampling strategy to their simulated daily fluxes. 
+They calculated a value of 0.6 $\pm$ 0.1 PgC/yr at the model resolution. 
+This result was similar to \emph{Wetzel et al.} (2006). 
+Applying their sampling strategy to the simulated fluxes 
+returns a sampling uncertainty of $\pm$ 0.2 PgC/yr which translates to a sampling
+error of $\pm$ 0.07 PgC/yr for the 1990s. 
+The interannual variability returned by their
+sampling strategy was $\pm$ 0.1 PgC/yr which is the same as the value returned
+by sampling at the model resolution. 
+The total uncertainty calculated 
+(interannual variability and sampling error) by  \emph{Lenton et al.} (2006) was
+$\pm$ 0.1 giving an estimate of annual averaged uptake for the 1990s of 0.6
+$\pm$ 0.1 PgC/yr. The results are summarised in the table 1.
+
+\input{/home/nicholas/thesis/tex/misc/lenton_proposed_table.tex}
+
+\emph{Lenton et al.} (2006) tested the present sampling strategy in order to compare the 
+results to their proposed sampling strategy and came up with a total uncertainty value of
+twice that of their proposed sampling strategy. The results are summarised in the table 2.
+
+\input{/home/nicholas/thesis/tex/misc/lenton_current_table.tex}
+
+The uncertainty calculated by subsampling the simulated data in \emph{Lenton et al.} (2006)
+was the same as that calculated by sampling at the model resolution. According to
+\emph{Lenton et al.} (2006) this suggests: 
+\begin{inparaenum}[(1)]
+\item that the uncertainty due to sampling frequency is small compared to 
+the uncertainty due to interannual variability, and
+\item sampling at higher resolution would not improve large-scale regional flux estimates,
+\end{inparaenum}
+
+% include Friedrich and Oschlies 2009
+Friedrich and Oschlies (2009) present a method for mapping surface pCO$_{2}$ 
+on a basin scale using ARGO floats. It was tested using an eddy-resolving 
+biogeochemical model of the North Atlantic. 
+Friedrich et al. (2009) use voluntary observed ship (VOS) and ARGO float 
+coverage to generate synthetic observations of the model and use the observations 
+to form a training data set for self organizing neural networks.
+The results, once the trained neural network is applied to the observations of 
+SST and SSS and compared to the simulated data at model resolution, show an 
+improvement of remote sensing based estimates with the resulting monthly mean 
+pCO$_2$ maps covering 70\% of the area with a RMS error of 
+15.9 $\mu$atm (Friedrich and Oschlies, 2009).
+
+% include lenton_etal_2009
+A high-latitude North Pacific and North Atlantic annual mean air-sea CO$_2$ 
+flux sampling strategy was developed by Lenton et al. (2009) following the 
+methods used by Lenton et al. (2006). 
+The study showed that a regular sampling strategy of every 6$^\circ$ in latitude 
+and every 10$^\circ$ in longitude every three months returned the annual mean 
+air-sea CO$_2$ flux to within 15\% of the simulated annual mean 
+(Lenton et al., 2009). 
+Key features that are highlighted by Lenton et al. (2009) in this study are 
+that optimising the combination of spatial and temporal sampling results
+in fewer measurements than if the spatial and temporal signals are optimised 
+independently and that interannual variability contributes more to the 
+uncertainty in decadal annual mean uptake than sampling error and unresolved 
+mesoscale variability.
+
+% include schiller_etal_2004
+
+% schiller_etal_2004.tex
+Sampling strategies for the ARGO array in the Indian Ocean were assesed by 
+Schiller at al. (2004) using simulations data from an OGCM. The results show 
+that spatial sampling of 500 km zonally and 100 km meridionally is critical for 
+resolving intraseasonal oscillations.
+
+% include chierici_etal_2009
+
+% chierici_etal_2009.tex
+\emph{In situ} ocean data and remotely sensed data were used in conjunction 
+with observations of surface-water fugactiy of carbon dioxide by 
+Chierici et al. (2009) to estimate \emph{f}CO$_{2}^{SW}$.
+Sea-surface temperature (SST), mixed-layer depth (MLD) and chlorophyll \emph{a} 
+(chl \emph{a}) contributed significantly to the fit and two algorithms were 
+developed depending on the presence of chl \emph{a} data. 
+The estimated annual 
+CO$_2$ uptake was 0.0058 Gt C yr$^{-1}$ or 0.6 mol C m$^{-2}$ yr$^{-1}$. 
+
+% include mcneil_etal_2007
+
+% mcneil_etal_2007.tex
+McNeil et al. (2007) uses an independent method to estimate the Southern Ocean 
+air-sea flux of CO$_2$ that exploits all available surface ocean measurements 
+for DIC and ALK beyond 1986. 
+McNeil et al. (2007) estimate a Southern Ocean (\textless 50$^{\circ}$) CO$_2$ sink of 
+0.4$\pm$0.25 PgC.yr$^{-1}$ and a CO$_2$ sink of 1.1$\pm$0.6 PgC.yr$^{-1}$ in the 
+sub-Antarctic zone (40$^\circ$ to 50$^\circ$ S).
+Standard hydrographic properties are used by McNeil et al. (2007) to predict 
+surface-normalised DIC and Alk, and their empirical relation is applied to World 
+Atlas (2011) climatologies to estimate Southern Ocean air-sea CO$_2$ flux.
+
+\subsection{Genetic Algorithms}
+% include genetic algorithms
+% include Heaney
+
+The problem of how to optimally deploy a suite of sensors
+to estimate the oceanographic environment is addressed.
+An optimal way to estimate and predict the ocean environment is to assimilate
+measurements from dynamic and uncertain regions into a dynamic ocean model. 
+In order to determine the sensor deployment strategy that optimally samples the 
+regions' uncertainty, Heaney et al. (2007) present a Genetic Algorithm
+approach. The scalar cost function used by Heaney et al. (2007) is defined as a weighted 
+combination of a sensor suites sampling of the ocean variability, ocean 
+dynamics, transmission loss sensitivity, modeled temperature uncertainty. 
+The advantage of the GA approach is that the user can determine "optimal" via 
+a weighting of constituent cost functions, which include ocean dynamics, 
+acoustics, cost, time, etc. A numerical example with three gliders, two 
+powered AUVs and three moorings is presented by Heaney et al. (2007) 
+to illustrate the optimization 
+approach in the complex shelfbreak region south of New England. 
+
+Models can predict the ocean state better with the inclusion of field data and 
+using models can improve mapped fields generated from measured data.
+The challenge is limited resources. 
+According to Heaney et al. (2007), an integrated 
+optimization-assimilation-modeling system is being developed to perform optimal 
+ocean sampling and ocean prediction. The system involves combination of an 
+ocean model with data assimilation capabilities, an ensemble of measurement 
+platforms, and a non-linear constrained global optimization subsystem. 
+The optimization approach used by Heaney et al. (2007) is the Genetic 
+Algorithm or GA (Goldberg, 1989).
+The GA solves global optimization problems by generating a population of 
+individuals, that with each succesive population of individuals, chooses the 
+better individuals based on a complex cost-function.
+
+% include Rixen
+
+% include Van Der Walt
+		
+\subsection{Questions and Aims}
+%begin questons and aims
+\begin{itemize}
+\item Is there a time and longitude sampling frequency that can achieve a significantly
+lower sampling error without a significant expense in sampling?
+
+\item How can we decide what constitutes an efficient trade-off between sampling error
+and sampling effort?
+
+\item If we attempt to abandon the use of a regular grid to sample, can the sampling
+effort be reduced?
+
+\item Does the optimal sampling strategy of the decadal mean sample the simulated 
+annual means with sufficient accuracy?
+
+\item Does the the optimal sampling strategy of the mean seasonal or annual cycle 
+sample each simulated year with sufficient accuracy?
+
+\item What do we use to determine the fitness of a sampling strategy:
+Radial Basis Functions or statistical similarity?
+\end{itemize}
+\newpage
+
+\section{Data and Methods}
+%begin data and methods
+\subsection{Model Data}
+%begin model data
+The simulated model data is obtained from ORCA2-LIM, an ocean model that is 
+based on the ORCA2 global configuration of OPA version 8.2 
+(Aumont and Bopp, 2006 from Madec et al. 1998) coupled with the
+ dynamic-thermodynamic ice model devoloped at Louvain-La Neuve 
+ (Timmerman et al. 2003 in Aumont and Bopp, 2006). 
+The mean horizontal resolution of the ocean model is 
+2$^{\circ}$ by 2$^{\circ}$ cos($\Phi$) (where $\Phi$ is latitude). 
+There are 30 vertical levels; twelve of which are located in the top 125 m. 
+The parameterization of Gent and McWilliams (1990) is used for the effects of 
+unresolved mesoscale eddies poleward of 10$^{\circ}$ latitude. 
+Lateral mixing, both on tracers and momentum, is performed along isopycnal 
+surfaces as in the work by Lengaigne et al. (2003). 
+The flow of deep water over bathymetry is represented using the bottom boundary 
+layer (BBL) proposed by Beckmann and Doscher (1997). 
+Vertical eddy and viscosity coefficients are computed from the prognostic model 
+of turbulent kinetic energy (TKE) of Blanke and Delecluse [1993]. 
+Climatological atmospheric forcing are constructed from various data sets 
+consisting of daily NCEP/NCAR 2m atmospheric temperature averaged over 1948-2003 
+(Kalnay et al., 1996), monthly relative humidity [Trenberth et al., 1989],
+monthly ISCCP total cloudiness averaged over 1983-2001 [Rossow and Schiffer, 1999], 
+monthly precipitation averaged over 1979-2001 [Xin and Arkin, 1997], and 
+weekly wind stress based on ERS satellite product and TAO observations 
+(Menkes et al., 1998). Surface heat fluxes and evaporation are computed using 
+empirical bulk formulas described by Goose [1997]. 
+To avoid any strong model drift, modeled sea surface salinity is restored to the 
+monthly WOA01 data set [Conkright et al., 2002] with a timescale of 40 days. 
+The ocean model has been spun up for 200 years.]
+
+The ocean biogeochemical model used is the Pelagic Interaction scheme for 
+Carbon and Ecosystem Studies (PISCES) derived from the Hamburg Model of 
+Carbon Cycle version 5 (HAMOCC5) [Aumont and Bopp (2006), Aumont et al., 2003]. 
+The model has 24 compartments. Phytoplankton growth can be limited by nitrate, 
+phosphate, ammonium, silicate and iron (Aumont and Bopp, 2006). 
+There are two phytoplankton size classes and two zooplankton size classes 
+(Aumont and Bopp, 2006). 
+
+\subsection{Flux calculations}
+%begin flux calculations
+The model data set has two variables: DIC flux and $\delta$pCO$_2$. 
+The model makes use of ? to calculate air-sea carbon flux. 
+
+To calculate pCO$_2$ from $\delta$pCO$_2$, the annual average of atmospheric
+CO$_2$ is removed from the $\delta$pCO$_2$ for each year in the dataset.
+
+\subsection{Data Analysis}
+%data analyisis
+Data analysis is done using Python, and all scripts for the data analysis are 
+available. Python packages, Numpy, Scipy and Matplotlib are the most commonly
+used scientific packages.
+
+\subsection{Signal to Noise Ratios}
+%begin signal-to-noise rations
+\emph{Lenton et al.} (2006) defined the seasonal cycle to be the signal and the 
+nonseasonal variablity to be the noise.
+
+\begin{equation}
+SNR = \frac{\sigma^2_{SIGNAL}}{\sigma^2_{NOISE}} = \frac{\sigma^2_{SIGNAL}}{\sigma^2_{ALLDATA} - \sigma^2_{SIGNAL}}
+\end{equation}
+
+\subsection{Fourier Transforms}
+%fourier transform
+The Discrete Fourier Transform (DFT) is a unitary transformation in that it preserves
+the norm of a vector. 
+
+The Fast Fourier Transform (FFT) is an important 
+version of the DFT that can be solved much faster than the DFT (Gershenfeld, 1999).
+\begin{equation}
+X{_k} = \sum_{n=0}^{N=1} x_{n} exp -\frac{2{\pi}i}{N}kn
+\end{equation}
+
+\subsection{Testing all the possible regular grid strategies}
+%begin brute force search
+Testing each possible sampling strategy that makes use of a regular grid can be
+done with time, depth, latitude and longitude dimensions. For the purpose of 
+this investigation the depth dimension is not used as the study involves 
+surface measurements. The latitude data is assumed to be collected at the same 
+resolution as the model grid. In this case, the model grid has a N-S resolution 
+of 2 $^\circ$ cos($\theta$).
+
+The method that is used is a brute-force or exhaustive search method that aims
+to test all regular grid sampling possibilities. It goes 
+through the following steps:
+
+\begin{enumerate}
+\item A function is created that, for a given sampling strategy, ie. How many 
+samples per year, and at each time, how many samples in space, 
+the mean of every realization of this grid is calculated
+the standard deviation of these means is calculated as the sampling error.
+\item Another function passes each possible sampling strategy to the previous
+function in order for the sampling error at each sampling strategy to be
+calculated
+\item the results are plotted for each sampling frequency.
+\item The trade off between sampling effort and sampling error can then be read 
+directly off the plot.
+\item The best sampling strategy can be chosen using cost/benefit approach or
+perhaps the criteria has to be met for a certain sampling error.
+\end{enumerate}
+
+\subsection{Genetic Algorithm}
+%begin genetic algorithms
+The genetic algorithm can be used to find a subset of points from the data set
+that has a minimal error in predicting the pCO$_2$ for the entire data set.
+
+Genetic Algorithms draw parallels from evolutionary biology. They are a set of
+computational search techniques that approximate solutions to optimization 
+problems.
+
+The state of a GA is given by a population and each member of the population
+is a complete set of parameters for the function being searched (Gershenfeld, 1999).
+The whole population is updated in generations.
+
+Genetic Algorithms have the following elements:
+
+\begin{description}
+  \item[Representation of solution:] 
+	Possible solutions to a problem are represented as a binary string of a fixed length. 
+	The solution can also be represented by integers or another set but 
+    binary is the most common or traditional method. 
+	The solutions contain genes or characteristics which are also of fixed length.
+  \item[Construction of a gene-map:] 
+	A gene-map is constructed. The gene-map associates a gene with a value.
+  \item[Initialisation of the population:] 
+	A number of binary strings representing individual solutions are randomly 
+	created to make up the initial gene pool or population.
+  \item Once a population has been initialised a number of steps are repeated until 
+	some criteria is met which determines termination.
+  \item[Evaluation:] 
+	Each individual solution in the population is evaluated by a fitness 
+	function to determine a fitness value.
+  \item[Selection of parents:] 
+	Parents are chosen from the population or solution space.
+  \item[Reproduction:] 
+	New offspring are created from the parents and become the new population. 
+	Operators such as cross-over, mutation and elitism are used.
+  \item[Termination criteria:] 
+	A termination criteria, already declared, will break the algorithm out of the loop.
+\end{description}
+
+\subsubsection{Selection}
+
+A genetic algorithm needs to pass on information from one generation to 
+another. Selection is the name given to the step which selects parents from the
+current generation whose information will be transferred into the next 
+generation.
+
+There are a number of selection methods that can be used in a genetic algorithm.
+Tournament selection and Roulette wheel selection are the most commonly used.
+
+In Roulette wheel selection, the individuals of a generation are a ranked 
+according to their fitness. Individuals with a greater fitness have a greater 
+probability to be chosen as parents.
+
+Tournament selection is accomplished through randomly selecting an individual
+to compete against another randomly selected individual. The fittest individual
+is the winner and is then used as a parent for the next generation.
+
+\subsubsection{Crossover}
+
+Crossover is the process whereby the parents selected in the Selection process
+pass on their information to children. Crossover can be done at one or more 
+points. A random number is selected and at that point in the individuals genetic
+code, the string is split and the two parents exchange that part of their code.
+
+\subsubsection{Mutation}
+While Crossover can add genetic diversity to the population, another method of
+adding random diversity is often used. This method is called Mutation and 
+involves the chance of randomly selecting a number that falls within the 
+mutation rate which results in the possibility of the flipping of a random 
+bit in the genetic code of the children. The chance 
+of mutation needs to be set so as not to add too much diversity or too
+little.
+
+\subsubsection{Elitism}
+Elitism ensures that the information belonging to the most fit individual is passed onto 
+the next generation.
+
+\subsubsection{Implementation of Genetic Algorithm}    
+\begin{description}
+  \item[Representation of solution:] 
+	The solutions or chromosomes are represented as binary strings. 
+	Each location has a unique representation as a binary string. 
+	The length of this string is dependent on the number of locations
+    available to sample at. 
+  \item[Construction of a gene-map:] 
+	Each location in the search space is represented as a unique binary string. 
+	The binary strings are stored as keys in a dictionary or associative array. 
+	The values associated with these keys are also dictionaries. 
+	These dictionaries contain the keys 'location' and 'value' and their associated 
+	location stored as a tuple and value stored as a float. 
+	The gene-map not only contains valid sampling locations but it must also hold 
+	genes that do not necessarily represent valid sampling locations. 
+	These currently include the genes that are necessary for the 
+    `padding' of the binary strings.
+  \item[Initialisation of the population:] 
+	The population was initialised with 20 chromosomes. 
+	Each chromosome has a length of 100 times the length of the binary 
+    string representing the gene. 	
+	This effectively means that each solution chromosome contains the 
+    location of 100 possible sampling locations. 
+	It is important to note that the solution may not contain 100 
+    unique solutions. 
+	It is also important to note that the genes that are used to `pad' 
+    the tail of the gene-map can be selected. 
+	The length of the binary string representing the gene is determined by the 
+	number of available locations that can be sampled.
+  \item[Evaluation:] 
+	There are two fitness functions available in the algorithm that 
+	can determine the fitness value for a chromosome solution:
+  \begin{itemize}
+    \item The first is a combination of the difference between the population mean 
+	and sample mean and the difference between the population standard deviation 
+	and the sample standard deviation with an added function that multiplies 
+	the count of non-unique sampling locations used.
+    \item The second makes use of a Radial Basis Function which 
+    interpolates the sampled data points. 
+	The difference between the actual data and the interpolated data is 
+	squared at each node/pixel/point and the sum of these values is the fitness value.
+  \end{itemize}
+  \item[Selection of parents:] 
+	Both tournament selection and roulette wheel selection can be used to 
+	select parents for the following generations.
+  \item[Reproduction:] 
+	Single-point cross-over, mutation and elitism are all used in this stage of the algorithm. 
+	The single-point cross-over can occur at any bit in the binary string. 
+	The mutation rate is set to a very low number so that only one in 
+    every 40 solutions experiences mutation.
+  \item[Termination criteria:] 
+	The algorithm terminates after a defined number of iterations. 
+	10, 100, 1000, 10000 iterations have been tried.
+  \item[Fitness Function]
+       The fitness of a solution can be determined by the similarity between the mean, standard deviation, and
+       range of the sample and the mean, standard deviation, and range of the population. This method does not
+       require a lot of computational power.
+       The fitness can also be determined by the RMSE between data and the RBF interpolation of the sample. This
+       method requires a lot of computation.
+       
+\end{description}
+
+\newpage
+\section{Results}
+\subsection{Model Data Analysis}
+In this section the data which is used to calculate and test the regular
+sampling strategy and the data that is used to calculate and test the
+sampling strategy calculated from the genetic algorithm is analysed.
+
+The C0$_2$ flux from Takahashi et al. (2009) in figure 1 ranges from values of $\pm$-6.0 teragrams per year
+to $\pm$2.0 teragrams per year in the Southern Ocean.
+Positive fluxes (outgassing) is evident in regions south of 50$^{\circ}$ and negative fluxes to the north,
+  \begin{figure}[H]
+  \caption{Mean C0$_2$ flux for a reference year 2000}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/figures/misc/totalfluxmap.jpg}
+  \end{figure}
+  
+Figure 2 shows the distribution of CO${_2}$ flux
+in the Southern Ocean over the period 1998 to 2007. 
+In figure 2 it can be seen that the range is between $\pm$-1.5 teragrams per year
+and $\pm$0.3 teragrams per year. A much smaller range than evident in the observations.
+This data shows a negative flux into most of the ocean.
+  \begin{figure}[H]
+  \caption{Mean CO$_2$ flux for 2000-2009 (5 day averages)}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/data-analysis/output/figures/cflux5daydecmean.png}
+  \end{figure}
+Strong outgassing can be 
+observed east of the Antarctic Peninsula around the Weddel and Scotia seas. 
+There is also strong negative flux in the South Indian Ocean. 
+In the South 
+Pacific Ocean outgassing is evident in between 60$^\circ$ and 70$^\circ$ whereas
+in the Atlantic and Pacific the outgassing is stronger between 
+50$^\circ$ and 60$^\circ$ S. 
+Between 50$^\circ$ an 70$^\circ$ S and 160$^\circ$ W and 160$^\circ$ E there is 
+a net outgassing region. 
+Net uptake regions (with a positive air-sea CO$_2$ flux) are north 
+of 60$^\circ$ S in the Pacific Ocean.
+
+In figure 3 it can be seen that the range is between $\pm$-2.0 teragrams per year
+and $\pm$0.9 teragrams per year. A smaller range than evident in the observations, yet closer to the observations than
+the data averaged over 5 days. In figure 3 there is positive flux in most regions south of 50$^{\circ}$ which is closer 
+to the values seen in the observations.
+  \begin{figure}[H]
+  \caption{Mean CO$_2$ flux for 1998 - 2007 (daily averages)}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/data-analysis/output/figures/cfluxdailydecmean.png}
+  \end{figure}
+
+Figure 4 shows the decadel mean for pCO$_2$. We can compare the CO$_2$ flux to the pCO$_2$. 
+As expected, the regions of high pCO$_2$ closely resemble those of a strong negative flux or outgassing
+and regions of low pCO$_2$ resemble regions of strong postive flux or uptake. 
+Notably the region to the east of the Antarctic Peninsula shows a stronger signal in the CO$_2$ flux
+than in the pCO$_2$ values.
+  \begin{figure}[H]
+  \caption{Mean CO$_2$ flux for 1998 - 2007 (daily averages)}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/data-analysis/output/figures/pCO2decmean.png}
+  \end{figure}
+  
+The mean decadel pCO$_2$ distribution shows a very similar pattern to the 
+CO$_2$ flux. Noticable difference is that the Weddel Sea has a a negative 
+$\delta$pCO$_2$. On longer timescales CO$_2$ flux is driven by $\delta$pCO$_2$.
+The strong positive uptake around the antarctic continent is driven by the large
+$\delta$pCO$_2$. In other regions the positive uptake is found along western 
+boundary currents that bring cold water south.
+
+  \begin{figure}[H]
+  \caption{Annual mean for the each year of the model output}
+  \centering
+  \includegraphics[width=\linewidth]{/home/nicholas/masters/figures/misc/annual_means_DICflux.png}
+  \end{figure}
+  
+The annual means for CO${_2}$ uptake in figure 5a and pCO${_2}$ in figure 5b  
+show a number of shifts over the model time period. There is however a very 
+strong replicability in the annual means. This implies that interannual 
+variability is not large. 
+
+In both the decadel and annual means for CO${_2}$ flux and
+pCO${_2}$ the Weddel and Scotia Sea CO${_2}$ flux is more dominant that the pCO${_2}$.
+There is a strong mean CO${_2}$ flux along the Antarctica continent as well
+as the western boundary currents in South America, Australia and 
+the Agulhas Retrofelection region.
+The Weddel and Scotia sea region shows the greatest variability in between the
+different years.
+
+Figure 6 shows the February map of the observations from Takahashi et al. (2009) and figure 7 shows the August observations.
+From the summer observations it appears that there is a lot of neutral flux with some outgassing but the majority of the Southern Ocean
+exhibits strong uptake especially to the west of Patagonia. 
+In winter the negative flux regions move northwards and most of the Southern Occean exhibits
+neutral flux with the exception of the ice margin where there is very strong outgassing.
+ 
+  \begin{figure}[H]
+  \caption{Mean February CO$_2$ flux for a reference year 2000}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/figures/misc/febtotalfluxmap.jpg}
+  \end{figure}
+  
+  \begin{figure}[H]
+  \caption{Mean August CO$_2$ flux for a reference year 2000}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/figures/misc/augtotalfluxmap.jpg}
+  \end{figure}
+  
+To assess whether or not the model has captured the seasonal variability seen
+in observations, the climatological Summer (January, February, March) and 
+Winter(July, August, September) model data can be compared to the most recent
+data from Takahashi et al. (2009). 
+
+Figures 7 and 8 show the summer (January, February, March) and Winter (July, Ausgust, September)
+simulated CO$_2$ data from the 5-day averaged data for 2000 to 2009 and the daily data for
+1998 - 2007 respectively. The daily CO$_2$ data seems to have captured the outgassing at the
+ice margins far better than the 5-day averaged data. The daily CO$_2$ data better represents the 
+temporal and the spatial variability that can be seen in the observations.
+
+  \begin{figure}[h]
+  \caption{Mean Summer (top) and Winter (bottom) CO$_2$ flux for 2000 - 2009 (5 Day averages)}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/data-analysis/output/figures/summer_winter_means_cflx5day.png}
+  \end{figure}
+  
+  \begin{figure}[h]
+  \caption{Mean Summer (top) and Winter (bottom) CO$_2$ flux for 1998 - 2007 (daily averages)}
+  \centering
+  \includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/data-analysis/output/figures/summer_winter_means_cflxdaily.png}
+  \end{figure}
+  
+The summer mean shows a very 
+strong positive flux along the edge of the antarctic continent which becomes a 
+zero flux over winter. A strong postitive flux can be seen between 30$^\circ$ 
+and 40$^{\circ}$ S in winter. 
+The seasonal shift from North to South in can be seen when comparing summer and 
+winter flux.
+The sea-ice in winter results in a zero CO$_2$ flux.
+The outgassing in the Weddel and Scotia seas is stronger in summer but remains
+in winter whereas in most other regions the outgassing is squeezed out by the 
+colder waters in winter. In winter the outgassing is reduced in the Weddel sea 
+and mostly found in the Scotia Sea.
+
+  \begin{figure}[H]
+    \caption{Standard deviations of Southern Ocean CO$_2$ flux from 1998-2007 for a) all the data, b) interannual,
+		c) the seasonal cycle and d) the non-seasonal}
+  \centering
+    \includegraphics[width=\linewidth]{/home/nicholas/masters/figures/newplots/standard_deviations_cflx.png}
+  \end{figure}
+
+The interannual standard deviation is shown in figure 10b
+When compared to the
+standard deviation of all the data (figure 10a), standard deviation of the
+seasonal cycle (figure 10c), and the standard deviation of the non-seasonal data
+(figure 10d) we can see that interannual variability contributes greatly to the 
+variablity in the data.
+The regions with high interannual varibility are also 
+strong outgassing zones. The region with the strongest interannual variability 
+is in the Scotia Sea next to the Antarctic Peninsula.
+hen looking at all the variability of all data (figure 10a) the Scotia Sea 
+remains a region of strong variability
+and is matched in magnitude by the varibility seen along Antarctica.
+When looking at the varibility within the seasonal/annual cycle (figure 10c) 
+we see that the
+variability within the year is the largest contributer to the overall variability.
+The Scotia Sea also has strong variability within the seasonal cycle.
+The strongest variability within the seasonal cycle is aling the Antarctic continent.
+The variability in the non-seasonal cycle (figure 10d) is about half that seen in the 
+seasonal cycle but slightly more than the interannual variability. The highest 
+variability in the non-seasonal cycle is the Scotia sea.
+
+The SNR has been computed for the daily simulated CO$_2$ fluxes in the Southern Ocean
+in figure 11. Over almost the entire Southern Ocean the SNR is less than 1.
+The area around Kerguelen is an exception that returns a very high SNR.
+  \begin{figure}[H]
+    \caption{Signal-to-noise ratios in the  Southern Ocean from 1998-2007 for a) CO$_2$ flux,
+	b) pCO$_2$}
+  \centering
+    \includegraphics[width=\linewidth]{/home/nicholas/masters/figures/newplots/snrs.png}
+  \end{figure}
+
+In figure 12 we investigate the timeseries of the simulated daily CO$_2$ fluxes.
+The seasonal cycle is very evident in the spatial mean and show a definite negative trend
+over the 10 year period. A negative trend in CO$_2$ flux is a positive trend in outgassing.
+ \begin{figure}[H]
+    \caption{The timeseries of the model data for the Southern Ocean}
+  \centering
+    \includegraphics[width=\linewidth]{/home/nicholas/masters/figures/misc/southern_ocean_timeseries_DICflux.png}
+  \end{figure}
+  
+Sections of constant latitude and constant longitude are plotted in figure 13. 
+the shift from north to south and the
+The shift from east to west can be seen when averaging over latitude and longitude 
+respectively.
+  \begin{figure}[hhtbp]
+    \caption{A plot of time against longitude with latitude 
+              averaged for all the data and a plot of time against latitude with longitude 
+                averaged}
+  \centering
+    \includegraphics[width=\linewidth]{/home/nicholas/masters/figures/newplots/cflx.png}
+  \end{figure}
+
+Plots of time against latitude and time against longitude for all the data, for 
+the seasonal cycle and for the non-seasonal data enable the seasonality of the 
+data to be visualised. In figures 1.8 and 1.9, 
+
+  \begin{figure}[H]
+    \caption{Two-dimensional fourier transform of a) longitudinally and b) latitudinally averaged
+	simulated Southern Ocean CO$_2$ flux}
+  \centering
+    \includegraphics[width=0.8\linewidth]{/home/nicholas/masters/figures/newplots/ft_cflx.png}
+  \end{figure}
+
+\clearpage 
+
+\subsection{Sampling strategies using a regular grid}
+% begin sampling using a regular grid
+By using the method set out in the methods section it is possible to 
+directly investigate the sampling error introduced by sampling at 
+different sampling resolutions. 
+Quite simply, the standard deviation of the means for every grid 
+realization for each sampling resolution is calculated and plotted.
+
+This can be done in two ways. 
+Firstly we can say that we sample every n 
+degree/day to every N degree/day with n being the model resolution and 
+therefore the maximum sampling resolution and N being the minimum 
+sampling resolution (ie. only sampling at one location once per year). 
+While being very comprehensive this method will result in repeating 
+sampling frequencies. 
+Different possibilities exist for sampling twice, 
+thrice or four times per year etc.
+So the second option would be to only sample regular grids that are 
+divisble by n. 
+So sampling once a year/degree, twice a year/degree etc. 
+This eliminates uneccessary calculation.
+
+The results from this method show how to combine sampling in time and 
+in space to return the lowest sampling error. 
+The figure shows how sampling error decreases with an input of sampling
+effort and the suggested sampling strategy can be chosen according to 
+what the acceptable sampling error is.
+
+%The different sampling strategies have been summarised into tables:
+%\input{/home/nicholas/projects/skeleton/replicate-lenton/hopefully.tex}
+
+The simulated annual mean uptake is calculated as 0.25 $\pm$ 0.04 PgC/yr
+at the model resolution. 
+The uncertainty is calculated as 
+\begin{equation}
+2\sigma_{interannual} = 2\sigma_{interannual}/\sqrt{10}
+\end{equation}
+where $\sigma$ is the variance about the annual mean uptake.
+
+Combining the sampling error and the uncertainty due to interannual
+variability allows an estimate for the total uncertainty. The total
+uncertainty is calculated as
+\begin{equation} 
+2\sigma_{total} = \sqrt{(2\sigma)^{2}_{interannual} + (2\sigma)^{2}_{sampling}}.
+\end{equation}
+
+Here is an example of a sampling strategy sampling 6 times a year and
+every 10$^{\circ}$.
+
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-60-10.tex}
+        
+\subsection{Interannual variability versus Sampling error}
+% begin interannual variability vs sampling error subsub
+According to the model analysis done by Lenton et al. (2006), the interannual 
+variability at the proposed sampling strategy contributed more to the error 
+introduced by the more coarse resolution of the sampling strategy. This would 
+suggest that the sampling strategy was sufficient to resolve the seasonal
+cycle and reduce the sampling uncertainty to an acceptable level.
+
+Additionally, a sampling strategy that results in a sampling error 
+which does not increase the total sampling error would reduce
+the uncertainty level to one completely dominated by interannual
+variablity.
+
+	\begin{equation}
+	\sigma_{interannual} > \sigma_{sampling-uncertainty}
+	\end{equation}
+
+As with Lenton et al. (2006), a sampling strategy that samples 4
+times a year at every 30 degrees results in the sampling error 
+contributing less to the total sampling error than the interannual
+variability. 
+However, for the total sampling error to be unaffected by the 
+sampling error, a sampling strategy that samples 5 times a year at 
+every 24 degrees in longitude is required.
+
+Which sampling strategy can meet the same criteria as suggested by Lenton et
+al. (2006) when using the PISCES / ORCA model? A table can be constructed for 
+each of the possible sampling strategies in order to assess whether or not the
+sampling strategy meets these criteria.
+
+  \begin{figure}[hhtbp]
+    \caption{Plot of the sampling error or standard deviations of 
+           the means of the grid realizations for different sampling frequencies}
+  \centering
+    \includegraphics[width=\linewidth]{/home/nicholas/thesis/replicate-lenton/output/new_brute_pcolormesh_cflx.png}
+  \end{figure}
+    
+\subsubsection{Sampling the simluated data 3 times a year}
+% 120-20
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-120-20.tex}
+Sampling 3 times a year, every 40$^{\circ}$ results in 2160 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table number ?.
+The sampling uncertainty, double the standard deviation (2$\sigma$), 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr or $\pm$ 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+% 120-18
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-120-18.tex}
+Sampling 3 times a year, every 36$^{\circ}$ results in 2160 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table number ?.
+The sampling uncertainty, double the standard deviation (2$\sigma$), 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr or $\pm$ 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+% 120-15
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-120-15.tex}
+Sampling 3 times a year, every 30$^{\circ}$ results in 1800 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr or $\pm$ 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+% 120-12
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-120-12.tex}
+Sampling 3 times a year, every 24$^{\circ}$ results in 1440 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr or $\pm$ 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+% 120-10
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-120-10.tex}
+Sampling 3 times a year, every 20$^{\circ}$ results in 1200 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+\subsubsection{Sampling the simulated data 4 times a year}
+% 90-20
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-90-20.tex}
+Sampling 4 times a year, every 40$^{\circ}$ results in 2160 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table number ?.
+The sampling uncertainty, double the standard deviation (2$\sigma$), 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr or $\pm$ 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+% 90-18 strat
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-90-18.tex}
+Sampling 4 times a year, every 36$^{\circ}$ results in 1620 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.12 PgC/yr for Southern Ocean uptake. 
+The estimated sampling error was $\pm$ 0.07 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+%90-15 strat
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-90-15.tex}
+Sampling 4 times a year, every 30$^{\circ}$ results in 1350 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+%90-12 strat
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-90-12.tex}
+Sampling 4 times a year, every 24$^{\circ}$ results in 1080 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+%90-10 strat
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-90-10.tex}
+Sampling 4 times a year, every 20$^{\circ}$ results in 900 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+\subsubsection{Sampling the simulated data 5 times a year}
+% 72-20
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-72-20.tex}
+Sampling 5 times a year, every 40$^{\circ}$ results in 2160 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table number ?.
+The sampling uncertainty, double the standard deviation (2$\sigma$), 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr or $\pm$ 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the mode.
+
+%72-18 strat
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-72-18.tex}
+Sampling 5 times a year, every 36$^{\circ}$ results in 1350 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.08 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.05 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+%72-15 strat
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-72-15.tex}
+Sampling 5 times a year, every 30$^{\circ}$ results in 1080 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.08 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.05 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+%72-12
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-72-12.tex}
+Sampling 3 times a year, every 30$^{\circ}$ results in 900 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertainty due to interannual
+variability results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+%72-10
+\input{/home/nicholas/thesis/replicate-lenton/output/regridded_cflux.pkl-72-10.tex}
+Sampling 3 times a year, every 30$^{\circ}$ results in 750 realizations 
+or grids per year. The results from applying this sampling strategy are
+summarized in the table below. (Table number?)
+The sampling uncertainty, double the standard deviation (2$\sigma$) 
+from sampling at this resolution is
+$\pm$ 0.09 PgC/yr for Southern Ocean uptake.
+The estimated sampling error was 
+$\pm$ 0.06 PgC/yr. % or \pm 0.03 PgC/yr.
+
+The annual mean uptake from the sampling strategy was identical to 
+the total simulated value. There was no bias in in latitudinal sampling
+as all latitudes are included.
+
+The value of the interannual variablity returned by applying this
+sampling strategy was $\pm$ 0.04 PgC/yr which is identical to the 
+interannual variability calculated while sampling at the model 
+resolution. 
+
+Combining the sampling error and the uncertianty due to interannual
+variability allows an estimate for the total uncertainty. The total
+uncertainty is calculated as 
+%2\sigma{_total} = \sqrt{(2\sigma)^{2}_{Interannual} + (2\sigma)^{2}_{Sampling}}.
+This results in an averaged uptake for the model period of 
+0.25 $\pm$ 0.07 PgC/yr.
+The uncertainty calculated from combining the the sampling and 
+interannual variability is greater than the uncertainty resulting from
+sampling at the resolution of the model.
+
+\subsection{Sampling Strategies not constrained by a grid}
+%begin non-grid sampling
+In the event of pCO$_2$ sampling being done by autonomous sampling platforms
+the sampling will not ne constrained by a regular grid. In this scenario the
+sampling platforms would return a mean with the greatest certainty if the 
+sampling platforms sampled the regions with the highest variability in time and in space.
+To test the effectiveness of a non-gridded sampling strategy, a genetic algorithm approach 
+was taken to return a sampling strategy that would best represent the simulated data.	
+
+        Permutations:
+        Optimise 5-day CO$_2$ flux data decadal mean
+         - test on daily data annual means
+            - 100 locations
+            - 200 locations
+            - 500 locations
+            - 1000 locations
+        Optimise daily data decadel mean
+         - test on daily annual means
+         - same number of locations
+        optimise annual cycle of daily data
+         - test on each year 
+         - 100, 500, 1000 locations
+        optimise pCO$_2$ data
+The first experiment tests the ability of the genetic algorithms solution
+for sampling the decadal mean to sample the annual means for each year in the simulated
+model dataset.
+
+The results are presented in the table below.
+        
+        \subsubsection{Optimised sampling strategy for sampling 
+        5-day averaged simulated CO$_2$ flux 2000-2009} 
+        %\subsubsection{Sampling the annual means of the 1998-2007 daily CO$_2$ using the optimised
+        %sampling strategy from the 5-day averaged 2000-2009 CO$_2$ flux}
+        %begin sample annual means
+        Using 200 points to sample the decadel mean CO$_2$ flux 
+        results in a RMS error of 1 molC.m$^{-2}$.y$^{-1}$. Using this
+        sampling strategy to sample the annual means results in a
+        mean RMS error of 2 molC.m$^{-2}$.y$^{-1}$ with a standard
+        deviation of 1 molC.m$^{-2}$.y$^{-1}$. 
+
+        The annual means for the sample data are consistently greater
+        than the simulated data. 
+
+        Is there a difference in the ability of the sampling strategy
+        to sample the 5-day averaged data and the daily data?
+
+        \subsubsection{Optimised sampling strategy for sampling the
+        seasonal cycle of 5-day averaged simulated CO$_2$ flux 2000-2009} 
+        %begin subsubsection
+        Using 200 points to sample the seasonal cycle of 5-day averaged 
+        simulated CO$_2$ flux 2000-2009 results in a RMS error of ...
+
+\subsection{Sampling the decadal mean}
+%subsection SAmpling decadel mean
+
+\subsubsection{Sampling the decadel mean using 50 locations}
+%subsubsection decadel mean 100 location
+%Sampling ....
+Sampling the decadel mean using 50 locations results in a fitness
+value of ... 
+This number is based on the comparison of the statistics
+of the sample data and the statistics of the entire data set as
+expained in the methods section, subsection ?.
+
+
+The RMS error between the model data set and the data set generated 
+from the Radial Basis Function interpolation of the sampling locations 
+chosed from the genetic algorithm optimisation is ... 
+The method for the calculation of this value can be found subsection ?
+of the methods section.
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set. 
+The mean value and the standard deviation are calculated for each year 
+as well as the RMS error between the model data set for that year and
+the data generated from the Radial Basis Function interpolation for 
+that year.
+
+The mean value from the sample generated data is 0.95$\pm$0.05 for 
+the duration the model data. 
+This value is lower than, and shows less interannual variability than,
+the actual mean of 2.98$\pm$0.17.
+The mean standard deviation of the sample generated data set is 
+1.19$\pm$0.03 compared to the model data standard deviation of
+1.68$\pm$0.07.
+The RMS error of the interpolation is 2.74$\pm$0.1 over the model 
+time frame. 
+This value is of the same order of magnitude as the mean CO$_2$ flux.
+
+The results are shown in table ...
+The plot for the interpolation is shown in figure ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/data_cflux_5day-coords-DecadalMean-2013-01-14_18:45-49-100000-stats_tex_table_annual_means.tex}
+
+\subsubsection{Sampling the decadel mean using 100 locations}
+%subsubsection decadel mean 100 location
+%Sampling ....
+Sampling the decadel mean using 100 locations results in a fitness
+value of ...
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The mean value of the sample generated data set is
+1.43$\pm$0.1 which is approximately half that of the actual data set, 
+which is 2.98$\pm$0.17.
+The sample generated data set has a mean standard deviation of 
+1.43$\pm$0.03 compared to the model data standard deviation of 
+1.68$\pm$0.07.
+The average RMS error between the sample generated data set and the 
+actual data is 2.3$\pm$0.06.
+
+The results are shown in table ...
+The plot for the interpolation is shown in figure ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/data_cflux_5day-coords-DecadalMean-2013-01-14_19:44-99-100000-stats_tex_table_annual_means.tex}
+
+\subsubsection{Sampling the decadel mean using 200 locations}
+%subsubsection decadel mean 200 location
+%Sampling ....
+Sampling the decadel mean using 200 locations results in a fitness
+value of ...
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+
+The mean value of the sample generated data set is
+2.11$\pm$0.11 compared to that of the actual data set, 
+which is 2.98$\pm$0.17.
+The sample generated data set has a mean standard deviation of 
+1.48$\pm$0.07 compared to the model data standard deviation of 
+1.68$\pm$0.07.
+The average RMS error between the sample generated data set and the 
+actual data is 1.63$\pm$0.05.
+
+The results are shown in table ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/data_cflux_5day-coords-DecadalMean-2013-01-14_20:38-199-100000-stats_tex_table_annual_means.tex}
+
+\subsubsection{Sampling the decadel mean using 400 locations}
+%subsubsection decadel mean 400 location
+%Sampling ....
+Sampling the decadel mean using 400 locations results in a fitness
+value of ...
+The genetic algorithm only managed to find 238 unique and valid 
+locations for this sampling strategy.
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The mean value of the sample generated data set is
+2.23$\pm$0.13 whereas the actual data set has a mean value of
+2.98$\pm$0.17.
+The sample generated data set has a mean standard deviation of 
+1.59$\pm$0.07 compared to the model data standard deviation of 
+1.68$\pm$0.07.
+The average RMS error between the sample generated data set and the 
+actual data is 1.49$\pm$0.04.
+
+The results are shown in table ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/data_cflux_5day-coords-DecadalMean-2013-01-14_23:49-238-100000-stats_tex_table_annual_means.tex}
+
+\subsubsection{Sampling the decadel mean using 800 locations}
+%subsubsection decadel mean 800 location
+%Sampling ....
+Sampling the decadel mean using 800 locations results in a fitness
+value of ...
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+%\input{/home/nicholas/thesis/genetic-sampling/output/tex/data_cflux_5day-coords-DecadalMean-2013-01-14_18:45-799-100000-stats_tex_table_annual_means.tex}
+
+\subsubsection{Sampling the decadel mean using current 4 times a year, every 60 degree sampling strategy}
+%subsubsection decadel mean 90-60
+%Sampling ....
+Sampling the decadel mean using 270 locations results in a fitness
+value of 8.67.
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+The mean fitness value is 9.07$\pm$1.84
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/reg_grid/annual_means-8.67_1_30.tex}
+
+\subsubsection{Sampling the decadel mean using proposed 4 times a year, every 30 degree sampling strategy}
+%subsubsection decadel mean 90-30
+%Sampling ....
+Sampling the decadel mean using a regular gird that samples at the model 
+resolution latitudinally and every 30 degrees longitudinally using 528 locations results in fitness
+value of 7.16
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+The mean fitness value is 5.46$\pm$2.42.
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/reg_grid/annual_means-7.16_1_15new.tex}
+
+\subsubsection{Sampling the decadel mean using proposed 5 times a year, every 24 degree sampling strategy}
+%subsubsection decadel mean 800 location
+%Sampling ....
+Sampling the decadel mean using 675 locations results in a fitness
+value of 8.71.
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+The mean fitness value is 4.24$\pm$1.23.
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/reg_grid/annual_means-8.71_1_12.tex}
+
+\subsection{Sampling the Annual Cycle}
+%subsection{Sampling the annual cycle}
+
+\subsubsection{Optimised Sampling of the annual cycle using 100 locations}
+%subsubsection annual mean 100 locations
+The optimised sampling of the annual mean results in a fitness value
+of ...
+The RMS error of the the Radial Basis Function interpolation is ...
+
+The sampling strategy is tested on the model data for each year in the
+model data set.
+
+The mean value for the CO$_2$ flux is 3.5$\pm$0.07 mmolC/m$^2$/day 
+which is 0.52 more than the mean value of 2.98$\pm0.17$ mmolC/m$^2$/day
+from the entire data set.
+
+The mean standard deviation is 3.27$\pm$0.27 mmolC/m$^2$/day
+compared to 2.61$\pm$0.3 mmolC/m$^2$/day.
+
+Applying the fitness function to the data for each year results in a
+mean fitness value of 0.69$\pm$0.34. 
+(how does this compare to the fitness of the sampling strategy on the
+seasonal cycle) 
+
+The results are shown in table ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/coords-AnnualCycle-2013-01-15_18:38-99-10000-statscflux_5day.tex}
+
+\subsubsection{Optimised Sampling of the annual cycle using 200 locations}
+%subsubsection annual mean 200 locations
+The optimised sampling of the annual mean results in a fitness value
+of ...
+The RMS error of the the Radial Basis Function interpolation is ...
+
+The sampling strategy is tested on the model data for each year in the
+model data set.
+
+The mean value for the CO$_2$ flux is 3.5$\pm$0.07 mmolC/m$^2$/day 
+which is 0.52 more than the mean value of 2.98$\pm0.17$ mmolC/m$^2$/day
+from the entire data set. This is the same sample mean obtained from 
+sampling at 100 locations.
+
+The mean standard deviation is 3.28$\pm$0.51 mmolC/m$^2$/day
+compared to 2.61$\pm$0.3 mmolC/m$^2$/day. The standard deviation from 
+this sampling strategy is slightly worse than the samppling strategy 
+using 100 locations. 
+
+Applying the fitness function to the data for each year results in a
+mean fitness value of 0.83$\pm$0.27. 
+(how does this compare to the fitness of the sampling strategy on the
+seasonal cycle)
+This value is less fit than the value obtained from sampling at 100 
+locations. The uncertainty ($\sigma$) over the years of this fitness
+value is lower than the same value for the 100 location sampling
+strategy.
+
+The results are shown in table ..
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/coords-AnnualCycle-2013-01-15_21:04-199-10000-statscflux_5day.tex}
+
+\subsubsection{Optimised Sampling of the annual cycle using 500 locations}
+%subsubsection annual mean 500 locations
+The optimised sampling of the annual mean results in a fitness value
+of ...
+The RMS error of the the Radial Basis Function interpolation is ...
+
+The sampling strategy is tested on the model data for each year in the
+model data set.
+
+The mean value for the CO$_2$ flux is 2.71$\pm$0.29 mmolC/m$^2$/day 
+which is 0.27 less than the mean value of 2.98$\pm0.17$ mmolC/m$^2$/day
+from the entire data set. This is an improvement on the sampling strategies
+using 100 and 200 locations.
+
+The mean standard deviation is 3.86$\pm$0.49 mmolC/m$^2$/day
+compared to 2.61$\pm$0.3 mmolC/m$^2$/day. The standard deviation from 
+this sampling strategy is worse than the sampling strategies 
+that used 100 and 200 locations. 
+
+Applying the fitness function to the data for each year results in a
+mean fitness value of 0.76$\pm$0.41. 
+(how does this compare to the fitness of the sampling strategy on the
+seasonal cycle)
+This value is less fit than the value from the 100 location sampling
+strategy but more fit than the 200 location sampling strategy.
+The uncertainty of this fitness value over the decade is higher than
+the uncertainty for the 100 and 200 location sampling strategies.
+
+The results are shown in table ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/coords-AnnualCycle-2013-01-15_21:22-499-10000-statscflux_5day.tex}
+
+\subsubsection{Optimised Sampling of the annual cycle using 1000 locations}
+%subsubsection annual mean 1000 locations
+The optimised sampling of the annual mean results in a fitness value
+of ...
+The RMS error of the the Radial Basis Function interpolation is ...
+
+The sampling strategy is tested on the model data for each year in the
+model data set.
+
+The mean standard deviation is 3.86$\pm$0.49 mmolC/m$^2$/day
+compared to 2.61$\pm$0.3 mmolC/m$^2$/day. The standard deviation from 
+this sampling strategy is worse than the sampling strategies 
+that used 100 and 200 locations. 
+
+Applying the fitness function to the data for each year results in a
+mean fitness value of 0.76$\pm$0.41. 
+(how does this compare to the fitness of the sampling strategy on the
+seasonal cycle)
+This value is less fit than the value from the 100 location sampling
+strategy but more fit than the 200 location sampling strategy.
+The uncertainty of this fitness value over the decade is higher than
+the uncertainty for the 100 and 200 location sampling strategies.
+
+The results are shown in table ..
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/coords-AnnualCycle-2013-01-15_21:51-999-10000-statscflux_5day.tex}
+
+\subsubsection{Optimised Sampling of the annual cycle using 2000 locations}
+%subsubsection annual mean 2000 locations
+The optimised sampling of the annual mean results in a fitness value
+of ...
+The RMS error of the the Radial Basis Function interpolation is ...
+
+The sampling strategy is tested on the model data for each year in the
+model data set.
+
+The mean standard deviation is 3.86$\pm$0.49 mmolC/m$^2$/day
+compared to 2.61$\pm$0.3 mmolC/m$^2$/day. The standard deviation from 
+this sampling strategy is worse than the sampling strategies 
+that used 100 and 200 locations. 
+
+Applying the fitness function to the data for each year results in a
+mean fitness value of 0.76$\pm$0.41. 
+(how does this compare to the fitness of the sampling strategy on the
+seasonal cycle)
+This value is less fit than the value from the 100 location sampling
+strategy but more fit than the 200 location sampling strategy.
+The uncertainty of this fitness value over the decade is higher than
+the uncertainty for the 100 and 200 location sampling strategies.
+
+The results are shown in table ...
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/coords-AnnualCycle-2013-01-15_23:10-1999-10000-statscflux_5day.tex}
+
+\subsubsection{Sampling the annual/seasonal cycle using current 4 times a year, every 60 degree sampling strategy}
+%subsubsection decadel mean 90-60
+%Sampling ....
+Sampling the annual/seasonal cycle using 1350 locations results in a fitness
+value of 24.4.
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+The mean fitness value is 17.41 $\pm$ 6.58
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/reg_grid/seasonal_cycle-24.4_18_1_30.tex}
+
+\subsubsection{Sampling the annual/seasonal cycle using proposed 4 times a year, every 30 degree sampling strategy}
+%subsubsection decadel mean 90-30
+%Sampling ....
+Sampling the annual/seasonal cycle using a regular grid that samples at the model 
+resolution latitudinally and every 30 degrees longitudinally using 2160 locations results in fitness
+value of 14.22.
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+The mean fitness value is 25.1 $\pm$ 7.86.
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/reg_grid/seasonal_cycle-14.22_18_1_15.tex}
+
+\subsubsection{Sampling the annual/seasonal cycle using proposed 5 times a year, every 24 degree sampling strategy}
+%subsubsection decadel mean 72 24
+%Sampling ....
+Sampling the annual/seasonal cycle mean using 4050 locations results in a fitness
+value of 20.52.
+The RMS error of the Radial Basis Function interpolation is ...
+
+The sampling strategy is then tested on the annual means for the data
+for each year in the model data set.
+
+The results are shown in table ...
+
+The mean fitness value is 33.4 $\pm$ 7.75.
+
+\input{/home/nicholas/thesis/genetic-sampling/output/tex/reg_grid/seasonal_cycle-20.52_14_1_12.tex}
+
+\subsection{Sampling All the Data}
+%subsection Sampling all data
+
+For the final experiment the genetic algorithm was passed the entire
+dataset and was run to optimise a sampling strategy that returned
+1000 locations that best represented the data set as a whole according 
+to fitness function.
+
+The algortihm was run for 100, 10000, and 100000 generations and the
+results were compared. 
+
+In order to see whether the algorithm favoured any time, latitude or 
+longitude band, histograms were plotted to see the frequency of samples 
+made for each time, latitude or longitude band.
+    
+The longitudinal bands which have the highest frequeny of samples
+are regions of high variability but they are also regions where the
+Antarctic continent meets the ocean further South allowing for more
+possible sampling locations in those areas.
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/histogram_lon.png}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/histogram_lat.png}
+\end{figure}
+
+The same can be said about the histogram of sampling frequency in
+latitudinal bands (figure ?) where loaction further north are favoured.
+Due to Antarctica taking up much of the area of the Southern part of the Southern
+Ocean it may be that the algorithm has less chance of choosing locations further south.
+There is a spike at $\pm$63$^{\circ}$ which corresponds to the zone of winter maximum
+outgassing.
+
+The frequency of locations sampled in the summer is the consistently
+less than the locations sampled in the winter. Due to ice forming 
+in the winter there are less sampling locations avialable in the winter.
+However, it is in the winter that the outgassing is at a maximum along
+the marginal ice zone and for the algorithm to capture
+the range of the data set it would have to sample in winter.
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/histogram_time.png}
+\end{figure}
+
+The latitude and longitude of the sampling locations are plotted 
+against each other with their CO$_2$ flux value in one plot and with 
+their time value in another plot.
+Figure 4.19 shows the location of the sampling with the time of 
+year(month) shown by the color.
+The algorithm has not picked out a preferred time of year to sample
+as the samples are spread out in time.
+The actual locations are also very evenly spread with no locations 
+being preferred.
+
+In figure 4.20 it can be seen that the algorithm has specifically chosen locations that
+are fairly close to the mean value but do show some spread.
+
+The same things is done for plotting latitude against time and
+longitude against time.
+    
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/scatter_latlon_time.png}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/scatter_latlon_values.png}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/scatter_timelat_lon.png}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/scatter_timelat_values.png}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/scatter_timelon_lat.png}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Caption}
+\centering
+\includegraphics[width=0.8\linewidth]{/home/nicholas/thesis/genetic-sampling/output/plots/all_data/coords-AllData-2013-01-16_14:12-999-100000-stats/scatter_timelon_values.png}
+\end{figure}
+
+\newpage
+\section{Discussion}
+	%begin discussion
+	%This is the discussion where things will be discussed. 
+The results from the 
+results section will be discussed and compared to results from the 
+literature review as well as issues that are raised in the literature.
+
+The questions asked in the Literature Review will
+be answered in the discussion.
+
+\textbf{Is there a time and longitude sampling frequency that can achieve a significantly
+lower sampling error without a significant expense in sampling?}
+
+From figure 4.25 we can
+establish that samplnig every 30 degrees, 
+4 times a year will return an sampling error
+that is of equal magnitude or less than the
+uncertainty contributed by the interannual variability.
+
+Sampling 5 times a year, very 24 degrees is the minimum sampling
+required for the sampling uncertainty not to contribute to the total 
+uncertainty.
+
+This sampling frequency is greater than that of Lenton et al. 
+(2006)
+
+\textbf{How can we decide what constitutes an efficient trade-off between sampling error
+and sampling effort?}
+
+The sampling error must be less or contribute less than the uncertainty that comes 
+from the interannual variability.
+
+\textbf{If we attempt to abandon the use of a regular grid to sample, can the sampling
+effort be reduced? Can we use less sampling locations?} 
+
+Using a genetic algorithms approach we can select sampling locations that 
+accurately represent a combination of statitistical properties of the
+whole data set or population. 
+
+We can take the decadel mean, which is fact
+just the mean value for the data over the time axis, and use the 
+sampling strategy optimsed for this dataset on the data generated by
+taking the mean across the time axis for each year. 
+In order to test the sampling strategy suggested by the genetic algorithm
+we can assess how well the suggested strategy performed for each year
+by seeing if the strategy managed to capture the correct mean and standard
+deviation as well as range. We can also see whether or not the algorithm
+was consistent across the years 
+
+We can do a similar experiment with the seasonal cycle.
+
+\textbf{Does the optimal sampling strategy of the decadal mean sample the simulated 
+annual means with sufficient accuracy?}
+
+If the longitudinal and latitudinal (every 30 degrees in longitude and every 2 degrees in 
+latitude, or 240 locations) sampling frequency that was used in the regular 
+sampling strategy is used to sample the data, the sampling strategy optimised by the genetic algorithm
+does not achieve much better results than the regular gridded sampling strategy.
+
+\textbf{Does the the optimal sampling strategy of the mean seasonal or annual cycle 
+sample each simulated year with sufficient accuracy?}
+
+If the time, longitudinal, and latitudinal (4 times per year, every 30 degrees in longitude, and every 2 degrees in 
+latitude, or 960 locations) sampling frequency that was used in the regular 
+sampling strategy is used to sample the data, the sampling strategy optimised by the genetic algorithm
+for the same number of locations does not achieve much better results than the regular gridded sampling strategy.
+
+\textbf{When we sample the entire data set, which regions and which times of the 
+year are preferred.} 
+
+The locations chosen by the algorithm is evenly spread out across the domain.
+It might improve if the algorithm is run for a more generations.
+
+\textbf{What do we use to determine the fitness of a sampling strategy?
+Radial Basis Functions or statistical similarity?}
+
+Using a fitness function based on matching the statistical properties of 
+the sample and the population requires much less computing power. 
+Deciding how the fitness function is weighted is an important component.
+
+Using the RMSE of the RBF as the fitness value requires a lot of computing power.
+The more locations that are used, the more computing power is needed. 
+Using the RBF on startegies involving few locations is possible but the 
+RMSE tends to be as large as the population mean for the data set as most data points
+in the interpolation are zero.
+	
+
+\subsection{What is the best regular gridded sampling strategy for the Southern Ocean?}
+%Begin regular sampling strategy
+According to Lenton et al. (2006) the suggested sampling strategy is to sample
+every 3 months, at every 30$^\circ$ in longitude and 3$^\circ$ in latitude. 
+Lenton et al. (2006) repeated the experiment sampling at every degree in 
+the north to south direction which did not change the estimate of the sampling uncertainty.
+In this experiment the N-S sampling was done at the model resolution, 2$^{\circ}$ cos$\theta$.
+Sampling at this suggested strategyu using data from 
+the PISCES model on the ORCA grid resulted in a similar sampling frequency. 
+The notable
+difference is the lower interannual variability in the annual means in the PISCES/ORCA
+model data in comparison to the BOGCM model used by Lenton et al. (2006).
+This meant that the sampling error could return a similar value to the sampling strategy
+suggested by Lenton et al. (2009) but would still be greater than the uncertainty
+resulting from unterannual variability. In this case the sampling uncertainty returned
+the same value as the interannual variability. However in the case of Lenton et al. (2009), 
+the sampling error did not result in the total sampling error increasing. 
+Using this strategy on the data does result in the sampling error increasing the 
+total sampling error.
+For a sampling strategy that results in a sampling error low enough to not contribute
+to the total error, the data would need to be sampled five times a year, every 24$^{\circ}$.
+Sampling 4 times a year it would not be possible to reduce the sampling error to 
+a low enough value.
+
+Is it good enough to sample 4 times a year every 30 degrees? The strategy suggesed by Lenton
+et al. (2009) relied on data which displayed a high interannual variability (ranging
+from 0.40 PgC/yr to 0.99 PgC/yr). 
+The data used in this study showed less variability in the uptake as well 
+as a lower value for uptake most likely do to better representation of outgassing
+at the marginal ice zones.
+It is likely that this data better represents the interannual variability
+and that sampling four times a year every 30 degrees is not sufficient
+reduce sampling error to below the interannual variabiltity. 
+%
+
+\subsection{Can an irregular sampling strategy reduce sampling uncertainty?}
+% Begin irregular sampling
+Using a genetic algorithm on the decadel mean to return a sampling strategy
+for the annual mean results in various results. 
+The annual means were sampled with strategies that used a various number of 
+locations. With an increase in the number of sampling locations, the accuracy
+of the sample mean was also increased. The standard deviation of the fitness
+values for each year also decreased with an increase in sampling loactions.
+Although the interannual variability in the fitness values was less than the 
+interannual variability of the population mean, not even using the sampling 
+strategy using 400 locations can prevent the sampling error contributing
+to the total sampling error.
+Added to this the fact that the sampling strategies did not return good
+representation of mean and standard deviation of the data it appears that
+using a sampling strategy not based on a regular grid does not
+help to reduce the sampling uncertainty.
+
+
+Using a genetic algorithm on the seasonal cycle to return a sampling strategy
+for the yearly data also results in various results.
+The interannual variability in the fitness values calculated for each
+year was much greater than the interannual variability when sampling using 
+200, 500, and 1000 locations. 
+The fitness value did not decrease much when sampling using more locations either.
+However, using 2000 locations the interannual variability of the fitness value
+was less than that of the interannual variability of the population mean and the fitness
+value was considerably lower than the other sampling strategies.
+
+Using a genetic algorithm to optimise sampling the entire dataset allows us 
+to identify locations in space and time that need to be sampled more frequently.
+Unfortunately it seems to have chosen location fairly evenly spread out across the domain.
+This suggests that data should be collected evenly across the domain. Better results may 
+be generated if the algorithm were to run for longer or if a different technique such as Radial Basis Function
+interpolation was to be used as the fitness function.
+		
+\newpage
+\section{Conclusion}
+%begin conclusion
+%The conclusion of the study.
+% What Lenton said
+An ocean biogeochemical model simulation is used to investigate
+sampling that is needed to constrain the annual uptake
+of CO$_2$ in the Southern Ocean to within 10\% of the annual mean. 
+%driven by NCEP-R1 forcing
+%in conjunction with subgrid-scale estimates of variability
+%to investigate the sampling required to constrain annual
+%uptake in the 1990s of CO$_2$ by the Southern Ocean. The
+The results showed that a regular three-monthly sampling very 30$^\circ$
+in longitude and 2$^\circ$ (model resolution) in latitude would return a sampling strategy in which the
+sampling error is equal to the interannual variability. 
+The sampling error does result in an increase to the total sampling error.
+The total uncertainty for the annual
+mean air-sea CO$_2$ flux is $\pm$0.06 PgC/yr. 
+This value is larger than 10\% of the total flux.
+
+Sampling five time a year every 24$^\circ$ in longitude results in 
+a sampling error that is small enough to not result in the total sampling error
+increasing. 
+The total uncertainty using this sampling strategy is $\pm$0.03 PgC/yr
+which is still more than 10\% of the total flux.
+%Lenton cont...
+When comparing between observations with model it seems
+that the model represents the statistical properties
+of the real ocean and captures much of the large scale variability
+that exists in the Southern Ocean. 
+%A more complex biological
+%model or higher resolution model may better represent high-frequency, 
+%non-seasonal variability but would not change the accuracy or precision
+The large-scale fluxes estimates would not be improved by a higher resolution
+model although the non-seasonal, high-frequency variability. 
+However, this result is specific
+to resolving the large scale fluxes and finer-scale sampling may be
+important for understanding biogeochemical cycling and its drivers. 
+%genetic algorithm
+As autonomous platforms become available to measure sea-water pCO$_2$ it
+is important to investigate ways to determine ways to discover
+sampling strategies that perform better than those that rely on a regular grid.
+
+A genetic algorithm was developed to assess if a sampling strategy could be optimised using 
+locations that are dependant on others.
+Optimising sampling strategies using the same number of locations as used by a regular grid 
+approach does not result in an interannual variabilityin the fitness value that is
+lower than the interannual variability of the mean value. Only when using double the sampling locations
+does the algorithm produce a sampling strategy where the interannual variability in the fitness
+value is less than the interannual variability of the annual mean.
+%\bibliographystyle{plain}
+\bibliography{MyCollection}
+	
+\end{document}
+
+%% Todo %%
+%% --Lit Review-- %%
+%% GO through everything and make it more coherent.
+%% --Methods-- %%
+%% Describe method used to compare sampling error and sampling effort.
+%%%% It is a Brute force or exhaustive search method
+%% Create different regional zones.
+%% Gen Alg tesTS out strategy for whole Southern Ocean
+%% and for different zones within the Southern Ocean
+%% STF-SAF; SAF-PF; PF-SB; SB-ANT.
+%% --Results--
+%% Compare CO2 flux and pCO2.
+%% Compare variability and regional data.
+%% Write out results from applying Lentons strategy on C02 flux.
+%% Write out results from new method.
+%%
+
+
