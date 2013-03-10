@@ -1,0 +1,54 @@
+Files included:
+Main.py
+output.py
+FortranModule.f90
+posProcess.py
+
+
+FORTRAN:
+NOTE: the following compilation instruction is for a LINUX machine.
+
+-To compile Fortran CODE:
+f2py -c FortranModule.f90 -m FModule
+
+f2py requires:
+python-numpy
+
+-To switch on multithread add additional flags:  --f90flags="-fopenmp" -lgomp 
+ie. : f2py -c FortranModule.f90 -m FModule --f90flags="-fopenmp" -lgomp
+
+-To force a specific fortran compiler to be used additional flag:
+--fcompiler="gfortran" for example
+
+
+In order to use the multi-thread openmp option requires:
+libgomp1
+
+
+
+Compatibility:
+Python code generated using v2.6 
+requires:
+python-numpy
+python-scipy
+
+
+
+USE:
+Run Main.py
+    - Uses Wendland C2 compact support RBF (fortran files)
+    - Support radius modifiable with variable "r" (currerntly r=20)
+    - Generates 4 random starting points (minimum due to choice of using a RBF polynomial)
+
+- Output is generated every 50 points
+- Output is dumped to plk files and locations is additionally dumped to an ASCII files
+- simple postProccesing.py script is included
+    - need to specify which directory to post process by modifiying the nPoints variable.
+            NOTE: output is currently saved in increments of 50 points.
+
+
+Issues:
+    - Uses scipy sparse matrix solver. This is inefficiently used for ease of implementation. A depreciation warning will be shown.
+    - Due to laziness errors will appear when creating directories if they exist alreay. 
+
+
